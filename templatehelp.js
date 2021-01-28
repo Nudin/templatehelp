@@ -13,18 +13,36 @@ var createBar = function (id) {
   bar.append(close)
   close.onclick = disable
   bar.id = id
-  bar.style.height = '99%'
+  bar.style.height = '69%'
   bar.style.width = '35%'
-  bar.style.backgroundColor = '#EEE'
+  bar.style.backgroundColor = '#F0F0F0'
   bar.style.position = 'absolute'
   bar.style.top = 0
   bar.style.right = 0
   bar.style.padding = '0.7em'
   bar.style.overflow = 'scroll'
+  bar.style.borderLeft = '1px solid gray'
   cm.append(bar)
   bar.append(content)
+
   document.querySelector('.CodeMirror-scroll').style.width = '67%'
   return bar
+}
+
+var createPreview = function (id) {
+  var cm = document.querySelector('.CodeMirror')
+  var preview = document.createElement('div')
+  preview.style.height = '30%'
+  preview.style.width = '35%'
+  preview.style.position = 'absolute'
+  preview.style.bottom = 0
+  preview.style.right = 0
+  preview.style.padding = '0.7em'
+  preview.style.backgroundColor = '#FFF'
+  preview.style.borderTop = '1px solid gray'
+  preview.style.borderLeft = '1px solid gray'
+  cm.append(preview)
+  return preview
 }
 
 var getBar = function () {
@@ -34,11 +52,21 @@ var getBar = function () {
     bar = createBar(id)
   }
   bar.style.display = ''
-  return bar.children[1]
+  return bar
+}
+
+var getPreview = function () {
+  var id = 'templatepreview'
+  var preview = document.getElementById(id)
+  if (preview === null) {
+    preview = createPreview(id)
+  }
+  preview.style.display = ''
+  return preview
 }
 
 var display = function (templatedata) {
-  var bar = getBar()
+  var bar = getBar().children[1]
   bar.innerHTML = ''
   var header = document.createElement('div')
   var name = document.createElement('h2')
@@ -67,9 +95,7 @@ var display = function (templatedata) {
 }
 
 var showPreview = function (target) {
-  var bar = getBar()
-  bar.innerHTML += render(extractWikitext(target))
-  bar.append(document.createElement('br'))
+  render(extractWikitext(target))
 }
 
 var render = function (wikitext) {
@@ -79,7 +105,9 @@ var render = function (wikitext) {
   xmlhttp.onreadystatechange = function () {
     if (this.readyState === 4 && this.status === 200) {
       var pages = JSON.parse(this.responseText).parse; console.log(this.responseText, pages)
-      getBar().innerHTML += pages.text['*']
+      var preview = getPreview()
+      preview.innerHTML = 'Preview: <br>'
+      preview.innerHTML += pages.text['*']
     }
   }
   xmlhttp.open('GET', url, true)
@@ -160,8 +188,8 @@ var finish = function () {
 
 var disable = function () {
   finish()
-  var bar = document.getElementById('templatehelp')
-  bar.style.display = 'none'
+  getBar().style.display = 'none'
+  getPreview().style.display = 'none'
   document.querySelector('.CodeMirror-scroll').style.width = ''
 }
 
