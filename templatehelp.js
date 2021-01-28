@@ -2,7 +2,6 @@
 var createBar = function (id) {
   var cm = document.querySelector('.CodeMirror')
   var bar = document.createElement('div')
-  var content = document.createElement('div')
   var close = document.createElement('div')
   close.innerText = 'x'
   close.style.position = 'absolute'
@@ -13,35 +12,45 @@ var createBar = function (id) {
   bar.append(close)
   close.onclick = disable
   bar.id = id
-  bar.style.height = '69%'
+  bar.style.height = '99%'
   bar.style.width = '35%'
-  bar.style.backgroundColor = '#F0F0F0'
   bar.style.position = 'absolute'
   bar.style.top = 0
   bar.style.right = 0
-  bar.style.padding = '0.7em'
-  bar.style.overflow = 'scroll'
   bar.style.borderLeft = '1px solid gray'
   cm.append(bar)
-  bar.append(content)
 
   document.querySelector('.CodeMirror-scroll').style.width = '67%'
   return bar
 }
 
+var createDoc = function (id) {
+  var bar = getBar()
+  var doc = document.createElement('div')
+  doc.id = id
+  doc.style.height = '69%'
+  doc.style.width = '96%'
+  doc.style.overflow = 'scroll'
+  doc.style.backgroundColor = '#F0F0F0'
+  doc.style.padding = '0.7em'
+  bar.append(doc)
+  return doc
+}
+
 var createPreview = function (id) {
-  var cm = document.querySelector('.CodeMirror')
+  var bar = getBar()
   var preview = document.createElement('div')
+  preview.id = id
   preview.style.height = '30%'
-  preview.style.width = '35%'
-  preview.style.position = 'absolute'
+  preview.style.width = '96%'
+  preview.style.position = 'sticky'
   preview.style.bottom = 0
   preview.style.right = 0
-  preview.style.padding = '0.7em'
+  //  preview.style.padding = '0.7em'
   preview.style.backgroundColor = '#FFF'
   preview.style.borderTop = '1px solid gray'
   preview.style.borderLeft = '1px solid gray'
-  cm.append(preview)
+  bar.append(preview)
   return preview
 }
 
@@ -55,8 +64,20 @@ var getBar = function () {
   return bar
 }
 
+var getDoc = function () {
+  var id = 'templatedocumentation'
+  getBar()
+  var doc = document.getElementById(id)
+  if (doc === null) {
+    doc = createDoc(id)
+  }
+  doc.style.display = ''
+  return doc
+}
+
 var getPreview = function () {
   var id = 'templatepreview'
+  getBar()
   var preview = document.getElementById(id)
   if (preview === null) {
     preview = createPreview(id)
@@ -66,7 +87,7 @@ var getPreview = function () {
 }
 
 var display = function (templatedata) {
-  var bar = getBar().children[1]
+  var bar = getDoc()
   bar.innerHTML = ''
   var header = document.createElement('div')
   var name = document.createElement('h2')
@@ -189,7 +210,6 @@ var finish = function () {
 var disable = function () {
   finish()
   getBar().style.display = 'none'
-  getPreview().style.display = 'none'
   document.querySelector('.CodeMirror-scroll').style.width = ''
 }
 
